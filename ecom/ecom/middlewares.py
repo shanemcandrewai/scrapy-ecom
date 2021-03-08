@@ -78,6 +78,7 @@ class EcomDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+        request.meta['proxy'] = "http://127.0.0.1:8118"
         return None
 
     def process_response(self, request, response, spider):
