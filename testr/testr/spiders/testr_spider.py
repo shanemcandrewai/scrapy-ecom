@@ -10,12 +10,15 @@ class TestrSpider(scrapy.Spider):
         url = getattr(self, 'url', None)
         yield scrapy.Request(url=url, callback=self.parse)
         
-        
     def parse(self, response):
-        count += 1
-        while count < 10:
-            with Controller.from_port(port = 9051) as c:
-                c.authenticate()
-                c.signal(Signal.NEWNYM)
-            yield scrapy.Request(response.url, callback=self.parse, dont_filter=True))
-            self.log(f'Saved file {count}')
+#        with Controller.from_port(port = 9051) as c:
+#            c.authenticate()
+#            c.signal(Signal.NEWNYM)
+        while TestrSpider.count < 10:
+            TestrSpider.count += 1
+            filename = f'{TestrSpider.count}.html'
+            with open(filename, 'wb') as f:
+                f.write(response.body)
+            self.log(f'Saved file {TestrSpider.count}')
+#            self.log('xxx', response.url)
+            yield scrapy.Request(response.url, callback=self.parse, dont_filter=True)
