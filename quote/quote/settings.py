@@ -1,4 +1,4 @@
-# Scrapy settings for ecom project
+# Scrapy settings for quote project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'ecom'
+BOT_NAME = 'quote'
 
-SPIDER_MODULES = ['ecom.spiders']
-NEWSPIDER_MODULE = 'ecom.spiders'
+SPIDER_MODULES = ['quote.spiders']
+NEWSPIDER_MODULE = 'quote.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'ecom (+http://www.yourdomain.com)'
+#USER_AGENT = 'quote (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -45,13 +45,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'ecom.middlewares.EcomSpiderMiddleware': 543,
+#    'quote.middlewares.QuoteSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'ecom.middlewares.EcomDownloaderMiddleware': 543,
+    'quote.middlewares.QuoteDownloaderMiddleware': 543,
 }
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'ecom.pipelines.EcomPipeline': 300,
+#    'quote.pipelines.QuotePipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -1,7 +1,7 @@
 import scrapy
 
-class QuotesSpider(scrapy.Spider):
-    name = "ecom"
+class QuoteSpider(scrapy.Spider):
+    name = "quote"
 
     def start_requests(self):
         url = getattr(self, 'url', None)
