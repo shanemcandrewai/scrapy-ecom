@@ -22,8 +22,7 @@
     scrapy crawl quote -a url='http://quotes.toscrape.com'
     scrapy crawl quote -a url="http://quotes.toscrape.com"
 ## Tor
-### Linux
-[Install tor service](https://2019.www.torproject.org/docs/debian.html.en)
+### [Linux](https://2019.www.torproject.org/docs/debian.html.en)
 #### To use source lines with https in /etc/apt/sources.list
     sudo apt install apt-transport-https
 #### Add to /etc/apt/sources.list
@@ -41,7 +40,7 @@
         'https': 'socks5://127.0.0.1:9050'
     }
     requests.get('https://check.torproject.org', proxies=proxies).text
-#### Response
+#### Expected response
     Congratulations. This browser is configured to use Tor.
     However, it does not appear to be Tor Browser.
 ### Alternative test
@@ -51,14 +50,14 @@
 ### Linux
     sudo apt-get install privoxy
 ### Windows
-[Download](https://www.privoxy.org/sf-download-mirror/)
+[Download installer](https://www.privoxy.org/sf-download-mirror/)
 ### configure privoxy/config, restart
     forward-socks4a / 127.0.0.1:9050 .
 #### Privoxy version 3.0.26
     forward-socks5t   /               127.0.0.1:9050 .
 ### configure scrapy project settings.py
     DOWNLOADER_MIDDLEWARES = {
-	'quote.middlewares.EcomDownloaderMiddleware': 543,
+        'quote.middlewares.EcomDownloaderMiddleware': 543,
     }
 ### configure scrapy project middlewares.py
     def process_request(self, request, spider):
