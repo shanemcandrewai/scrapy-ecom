@@ -52,9 +52,10 @@
 ### Windows
 [Download installer](https://www.privoxy.org/sf-download-mirror/)
 ### configure privoxy/config, restart
-    forward-socks4a / 127.0.0.1:9050 .
-#### Privoxy version 3.0.26
     forward-socks5t   /               127.0.0.1:9050 .
+#### Privoxy Fatal error: init_error_log(): can't open logfile: '.\privoxy.log'
+##### Solution
+Launch privoxy as admin
 ### configure scrapy project settings.py
     DOWNLOADER_MIDDLEWARES = {
         'quote.middlewares.EcomDownloaderMiddleware': 543,
