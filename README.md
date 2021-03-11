@@ -78,7 +78,6 @@ Launch privoxy as admin
 ### [Tor ControlPort](https://stem.torproject.org/tutorials/the_little_relay_that_could.html)
 #### torrc
     ControlPort 9051
-    CookieAuthentication 1
     HashedControlPassword 16:D536B2E43265F0E660376B92BC8BF056D6DD4A390D3ACB4C311A41E1C9
 #### reload torrc
     pkill -sighup tor
@@ -87,5 +86,5 @@ Launch privoxy as admin
     from stem.control import Controller
 
     with Controller.from_port(port = 9051) as controller:
-      controller.authenticate('password')
+      controller.authenticate([password in quotes])
       controller.signal(Signal.NEWNYM)
