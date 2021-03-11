@@ -75,4 +75,17 @@ Launch privoxy as admin
 	However, it does not appear to be Tor Browser.<br />
 	<a href="https://www.torproject.org/download/">Click here to go to the download page</a>
     </p>
+### [Tor ControlPort](https://stem.torproject.org/tutorials/the_little_relay_that_could.html)
+#### torrc
+    ControlPort 9051
+    CookieAuthentication 1
+    HashedControlPassword 16:D536B2E43265F0E660376B92BC8BF056D6DD4A390D3ACB4C311A41E1C9
+#### reload torrc
+    pkill -sighup tor
+#### [Request new identity](https://stem.torproject.org/faq.html#how-do-i-request-a-new-identity-from-tor)
+    from stem import Signal
+    from stem.control import Controller
 
+    with Controller.from_port(port = 9051) as controller:
+      controller.authenticate('password')
+      controller.signal(Signal.NEWNYM)
