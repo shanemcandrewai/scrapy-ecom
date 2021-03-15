@@ -60,6 +60,8 @@ Launch privoxy as admin
     DOWNLOADER_MIDDLEWARES = {
         'quote.middlewares.EcomDownloaderMiddleware': 543,
     }
+#### [Set user agent](https://docs.scrapy.org/en/latest/topics/settings.html#std-setting-USER_AGENT)
+    USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'
 ### configure scrapy project middlewares.py
     def process_request(self, request, spider):
         request.meta['proxy'] = "http://127.0.0.1:8118"

@@ -9,6 +9,6 @@ class TestrSpider(scrapy.Spider):
         yield scrapy.Request(url=url, callback=self.parse)
         
     def parse(self, response):
-        print('xxxxx')
-        print(response.url.split('/')[-2] + '.html')
-        yield {'Item 1': response.xpath('/html/body/div/div[1]/main/div/div[3]/ul/li[1]/a/div/div[1]/h3/text()').get()}
+        with open('ant.json', 'wb') as f:
+            f.write(response.body)
+        self.log('xxx json saved')
