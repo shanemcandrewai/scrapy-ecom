@@ -90,3 +90,6 @@ Launch privoxy as admin
     with Controller.from_port(port = 9051) as controller:
       controller.authenticate([password in quotes])
       controller.signal(Signal.NEWNYM)
+### [regex](https://regex101.com)
+#### select json content
+    \{(?:[^{}]|(?R))*\}
