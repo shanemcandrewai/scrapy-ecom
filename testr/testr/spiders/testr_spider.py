@@ -18,8 +18,13 @@ class TestrSpider(scrapy.Spider):
             f.write(response.body)
         self.log('xxx json saved')
         items = json.loads(response.body)
+        yield items
         url_seller = (self.urlp.scheme + '://' + self.urlp.netloc + '/u/'
                      + items['listings'][0]['sellerInformation']['sellerName'].replace(
                          ' ', '-').lower()
-                     + '/' + str(items['listings'][0]['sellerInformation']['sellerId']))
+                     + '/' + str(items['listings'][0]['sellerInformation']['sellerId']) + '/')
         self.log('xxx ' + url_seller)
+        yield scrapy.Request(url=url_seller, callback=self.parse_seller)
+
+    def parse_seller(self, response):
+        yield None
