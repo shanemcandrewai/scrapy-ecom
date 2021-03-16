@@ -93,9 +93,5 @@ Launch privoxy as admin
 ### [regex](https://regex101.com)
 #### select json content
     \{(?:[^{}]|(?R))*\}
-##### alternative
+#### Select between `>{` and `}<`
     >\{.*?\}\<
-###### before json
-    <script id="__NEXT_DATA__" type="application/json">
-###### after json
-    </script><script nomodule="" src="https://cdn.ebayclassifieds.net/lrp/static/_next/static/chunks/polyfills-0f7d6ca538df72a35541.js"></script>
