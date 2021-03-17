@@ -90,10 +90,42 @@ Launch privoxy as admin
     with Controller.from_port(port = 9051) as controller:
       controller.authenticate([password in quotes])
       controller.signal(Signal.NEWNYM)
-### [regex](https://regex101.com)
+### [Parsing JavaScript code](https://docs.scrapy.org/en/latest/topics/dynamic-content.html?highlight=re_first#parsing-javascript-code)
+#### [regex test online](https://regex101.com)
 #### Select json content
     \{(?:[^{}]|(?R))*\}
 #### Select between `>{` and `}<`
     pat = '>\{.*?\}\<'
     js = response.xpath('//body').re_first(pat)[1:-1]
     jsp = json.loads(js)
+####   [Search nested compound data structures](https://stackoverflow.com/questions/9807634/find-all-occurrences-of-a-key-in-nested-dictionaries-and-lists)
+    def gen_dict_extract(key, var):
+        if hasattr(var,'items'):
+            for k, v in var.items():
+                if k == key:
+                    yield v
+                if isinstance(v, dict):
+                    for result in gen_dict_extract(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in gen_dict_extract(key, d):
+                            yield result
+##### print ancestor node paths WIP
+    def gen_dict_extract(key, var, keys=[]):
+        if hasattr(var, 'items'):
+            for k, v in var.items():
+                keys.append(k)
+                if k == key:
+                    print(keys)
+                    yield v
+                    keys.clear()
+                if isinstance(v, dict):
+                    for result in gen_dict_extract(key, v):
+                        yield result
+                    keys.clear()
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in gen_dict_extract(key, d):
+                            yield result
+
