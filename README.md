@@ -32,7 +32,7 @@
     apt install tor
 ### Windows
 #### [Download Expert Bundle](http://expyuzz4wqqyqhjn.onion/download/tor/index.html)
-#### execute [unzipped bundle location]\Tor\tor.exe
+#### Execute [unzipped bundle location]\Tor\tor.exe
 ###  [Test procedure](https://sylvaindurand.org/use-tor-with-python)
     import requests
     proxies = {
@@ -51,24 +51,24 @@
     sudo apt-get install privoxy
 ### Windows
 [Download installer](https://www.privoxy.org/sf-download-mirror/)
-### configure privoxy/config, restart
+### Configure privoxy/config, restart
     forward-socks5t   /               127.0.0.1:9050 .
 #### Privoxy Fatal error: init_error_log(): can't open logfile: '.\privoxy.log'
 ##### Solution
 Launch privoxy as admin
-### configure scrapy project settings.py
+### Configure scrapy project settings.py
     DOWNLOADER_MIDDLEWARES = {
         'quote.middlewares.EcomDownloaderMiddleware': 543,
     }
 #### [Set user agent](https://docs.scrapy.org/en/latest/topics/settings.html#std-setting-USER_AGENT)
     USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'
-### configure scrapy project middlewares.py
+### Configure scrapy project middlewares.py
     def process_request(self, request, spider):
         request.meta['proxy'] = "http://127.0.0.1:8118"
         return None
 #### Test procedure
     scrapy crawl quote -a url='https://check.torproject.org'
-##### check resulting file quotes-.html
+##### Check resulting file quotes-.html
     <h1 class="not">
 	Congratulations. This browser is configured to use Tor.
     </h1>
@@ -81,7 +81,7 @@ Launch privoxy as admin
 #### torrc
     ControlPort 9051
     HashedControlPassword 16:D536B2E43265F0E660376B92BC8BF056D6DD4A390D3ACB4C311A41E1C9
-#### reload torrc
+#### Reload torrc
     pkill -sighup tor
 #### [Request new identity](https://stem.torproject.org/faq.html#how-do-i-request-a-new-identity-from-tor)
     from stem import Signal
@@ -91,7 +91,9 @@ Launch privoxy as admin
       controller.authenticate([password in quotes])
       controller.signal(Signal.NEWNYM)
 ### [regex](https://regex101.com)
-#### select json content
+#### Select json content
     \{(?:[^{}]|(?R))*\}
 #### Select between `>{` and `}<`
-    >\{.*?\}\<
+    pat = '>\{.*?\}\<'
+    js = response.xpath('//body').re_first(pat)[1:-1]
+    jsp = json.loads(js)
