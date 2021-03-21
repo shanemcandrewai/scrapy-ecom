@@ -98,34 +98,19 @@ Launch privoxy as admin
     pat = '>\{.*?\}\<'
     js = response.xpath('//body').re_first(pat)[1:-1]
     jsp = json.loads(js)
-####   [Search nested compound data structures](https://stackoverflow.com/questions/9807634/find-all-occurrences-of-a-key-in-nested-dictionaries-and-lists)
-    def gen_dict_extract(key, var):
-        if hasattr(var,'items'):
-            for k, v in var.items():
+####   [Search for keys in nested compound data structures](https://stackoverflow.com/questions/9807634/find-all-occurrences-of-a-key-in-nested-dictionaries-and-lists)
+    def find_key(keys, targ):
+      for key in keys:
+        if isinstance(targ, dict):
+            for k, v in targ.items():
                 if k == key:
-                    yield v
-                if isinstance(v, dict):
-                    for result in gen_dict_extract(key, v):
-                        yield result
-                elif isinstance(v, list):
-                    for d in v:
-                        for result in gen_dict_extract(key, d):
-                            yield result
-##### print ancestor node paths WIP
-    def gen_dict_extract(key, var, keys=[]):
-        if hasattr(var, 'items'):
-            for k, v in var.items():
-                keys.append(k)
-                if k == key:
-                    print(keys)
-                    yield v
-                    keys.clear()
-                if isinstance(v, dict):
-                    for result in gen_dict_extract(key, v):
-                        yield result
-                    keys.clear()
-                elif isinstance(v, list):
-                    for d in v:
-                        for result in gen_dict_extract(key, d):
-                            yield result
-
+                    yield key, v
+                for vn in get_key(key, v):
+                    yield key, vn
+        if isinstance(targ, list):
+            for i, v in enumerate(targ):
+                for vn in get_key(key, v):
+                    yield key, vn
+##### Examples
+    listings = jsp['props']['pageProps']['searchRequestAndResponse']['listings']
+    list(find_key(['itemId', 'title'], listings))
