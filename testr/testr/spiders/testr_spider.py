@@ -8,14 +8,14 @@ class TestrSpider(scrapy.Spider):
     urlp = ''
 
     def start_requests(self):
-        url = getattr(self, 'url', None)
-        self.urlp = urlparse(url)
-        url_json = self.urlp.scheme + '://' + self.urlp.netloc + '/lrp/api/search?attributesById[]=' + self.urlp.fragment.split('|')[0].split(':')[1] + '&attributesByKey[]=' + self.urlp.fragment.split('|')[1].replace(':', '%3A') + '&l1CategoryId=1'
+        self.urlp = urlparse(getattr(self, 'url', None))
+        url_json = (self.urlp.scheme + '://' + self.urlp.netloc 
+                   + '/lrp/api/search?attributesById[]=' 
+                   + self.urlp.fragment.split('|')[0].split(':')[1] + '&attributesByKey[]=' 
+                   + self.urlp.fragment.split('|')[1].replace(':', '%3A') + '&l1CategoryId=1')
         yield scrapy.Request(url=url_json, callback=self.parse)
         
     def parse(self, response):
-        with open('ant.json', 'wb') as f:
-            f.write(response.body)
         self.log('xxx json saved')
         items = json.loads(response.body)
         yield items
