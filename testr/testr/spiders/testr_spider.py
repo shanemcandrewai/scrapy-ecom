@@ -18,15 +18,11 @@ class TestrSpider(scrapy.Spider):
                        + '&l1CategoryId=1')
         except IndexError:
             url_items = url
-
         yield scrapy.Request(url=url_items, callback=self.parse)
-        url_items2 = url_items + 'p/2/'
-        yield scrapy.Request(url=url_items2, callback=self.parse)
         
     def parse(self, response):
-        if response.status != 200:
-            self.log(f'xxx {response.status}')
-            breakpoint()
+        url = response.url
+        self.log(f'xxx {url}')
         try:
             items = json.loads(response.body)
         except json.decoder.JSONDecodeError:
@@ -48,6 +44,9 @@ class TestrSpider(scrapy.Spider):
                     sellerName = sellerName[:-1]
                 url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
                 yield response.follow(url=url_seller, callback=self.parse)
+        self.log(f'xxx finished')
+        yield scrapy.request(response.urljoin(url='/p/2'), callback=self.parse)
+#        yield scrapy.request(response.urljoin(url='/p/3'), callback=self.parse)
 
     def find_key(self, keys, targ):
         """ Search JSON string `targ` for `keys`, return path and value """
