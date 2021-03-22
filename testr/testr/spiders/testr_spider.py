@@ -10,30 +10,42 @@ class TestrSpider(scrapy.Spider):
         url = getattr(self, 'url', None)
         try:
             urlp = urlparse(url)
-            url_json = (urlp.scheme + '://' + urlp.netloc 
+            url_items = (urlp.scheme + '://' + urlp.netloc 
                        + '/lrp/api/search?attributesById[]=' 
                        + urlp.fragment.split('|')[0].split(':')[1]
                        + '&attributesByKey[]=' 
                        + urlp.fragment.split('|')[1].replace(':', '%3A')
                        + '&l1CategoryId=1')
         except IndexError:
-            url_json = url
+            url_items = url
 
-        yield scrapy.Request(url=url_json, callback=self.parse)
+        yield scrapy.Request(url=url_items, callback=self.parse)
+        url_items2 = url_items + 'p/2/'
+        yield scrapy.Request(url=url_items2, callback=self.parse)
         
     def parse(self, response):
+        if response.status != 200:
+            self.log(f'xxx {response.status}')
+            breakpoint()
         try:
             items = json.loads(response.body)
         except json.decoder.JSONDecodeError:
-            items = json.loads(response.xpath('//body').re_first('>\{.*?\}\<')[1:-1])
-        extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents', 'priceType',
-                   'sellerName', 'sellerId', 'cityName', 'countryAbbreviation']
+            items = json.loads(response.xpath('//body').re_first(
+                '>\{.*?\}\<')[1:-1])
+        extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
+                   'priceType', 'sellerName', 'sellerId', 'cityName',
+                   'countryAbbreviation']
         for e in self.find_key(extract, items):
             yield {str(e[0]) : e[1]}
             if 'sellerId' in e[0]:
                 sellerId = str(e[1])
             if 'sellerName' in e[0]:
                 sellerName = e[1].replace(' ', '-').lower()
+                sellerName = sellerName.replace('.', '-')
+                sellerName = sellerName.replace('--', '-')
+                sellerName = sellerName.replace("'", '')
+                if sellerName[-1] == '-':
+                    sellerName = sellerName[:-1]
                 url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
                 yield response.follow(url=url_seller, callback=self.parse)
 

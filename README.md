@@ -19,8 +19,10 @@
                 f.write(response.body)
             self.log(f'Saved file {filename}')
 ### Test procedure
-    scrapy crawl quote -a url='http://quotes.toscrape.com'
+#### Linux
     scrapy crawl quote -a url="http://quotes.toscrape.com"
+#### Windows
+    scrapy crawl quote -a url='http://quotes.toscrape.com'
 ## Tor
 ### [Linux](https://2019.www.torproject.org/docs/debian.html.en)
 #### To use source lines with https in /etc/apt/sources.list
@@ -67,7 +69,10 @@ Launch privoxy as admin
         request.meta['proxy'] = "http://127.0.0.1:8118"
         return None
 #### Test procedure
+##### Linux
     scrapy crawl quote -a url='https://check.torproject.org'
+##### Windows
+    scrapy crawl quote -a url="https://check.torproject.org"
 ##### Check resulting file quotes-.html
     <h1 class="not">
 	Congratulations. This browser is configured to use Tor.
