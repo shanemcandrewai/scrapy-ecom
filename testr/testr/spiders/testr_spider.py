@@ -7,17 +7,25 @@ class TestrSpider(scrapy.Spider):
     name = "testr"
 
     def start_requests(self):
-        urlp = urlparse(getattr(self, 'url', None))
-        url_json = (urlp.scheme + '://' + urlp.netloc 
-                   + '/lrp/api/search?attributesById[]=' 
-                   + urlp.fragment.split('|')[0].split(':')[1]
-                   + '&attributesByKey[]=' 
-                   + urlp.fragment.split('|')[1].replace(':', '%3A')
-                   + '&l1CategoryId=1')
+        url = getattr(self, 'url', None)
+        try:
+            urlp = urlparse(url)
+            url_json = (urlp.scheme + '://' + urlp.netloc 
+                       + '/lrp/api/search?attributesById[]=' 
+                       + urlp.fragment.split('|')[0].split(':')[1]
+                       + '&attributesByKey[]=' 
+                       + urlp.fragment.split('|')[1].replace(':', '%3A')
+                       + '&l1CategoryId=1')
+        except IndexError:
+            url_json = url
+
         yield scrapy.Request(url=url_json, callback=self.parse)
         
     def parse(self, response):
-        items = json.loads(response.body)
+        try:
+            items = json.loads(response.body)
+        except json.decoder.JSONDecodeError:
+            items = json.loads(response.xpath('//body').re_first('>\{.*?\}\<')[1:-1])
         extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents', 'priceType',
                    'sellerName', 'sellerId', 'cityName', 'countryAbbreviation']
         for e in self.find_key(extract, items):
@@ -26,16 +34,8 @@ class TestrSpider(scrapy.Spider):
                 sellerId = str(e[1])
             if 'sellerName' in e[0]:
                 sellerName = e[1].replace(' ', '-').lower()
-                url_seller = ('/u/' + sellerName
-                              + '/' + sellerId + '/')
-                yield response.follow(url=url_seller, callback=self.parse_seller)
-
-    def parse_seller(self, response):
-        user = json.loads(response.xpath('//body').re_first('>\{.*?\}\<')[1:-1])
-        extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents', 'priceType',
-                   'sellerName', 'sellerId', 'cityName', 'countryAbbreviation']
-        for e in self.find_key(extract, user):
-            yield {str(e[0]) : e[1]}
+                url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
+                yield response.follow(url=url_seller, callback=self.parse)
 
     def find_key(self, keys, targ):
         """ Search JSON string `targ` for `keys`, return path and value """

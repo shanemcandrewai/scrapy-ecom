@@ -17,6 +17,8 @@ NEWSPIDER_MODULE = 'testr.spiders'
 #USER_AGENT = 'testr (+http://www.yourdomain.com)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'
 
+DEPTH_LIMIT = 1
+
 # Obey robots.txt rules
 #ROBOTSTXT_OBEY = True
 
