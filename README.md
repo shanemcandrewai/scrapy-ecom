@@ -100,17 +100,18 @@ Launch privoxy as admin
     jsp = json.loads(js)
 ####   [Search for keys in nested compound data structures](https://stackoverflow.com/questions/9807634/find-all-occurrences-of-a-key-in-nested-dictionaries-and-lists)
     def find_key(self, keys, targ):
+        """ Search JSON string `targ` for `keys`, return path and value """
         if isinstance(targ, dict):
             for k, v in targ.items():
                 for key in keys:
                     if k == key:
-                        yield v, [k]
-                for vn, path in find_key(keys, v):
-                    yield vn, [k, *path]
+                        yield [[k], v]
+                for path, vn in find_key(keys, v):
+                    yield [[k, *path], vn]
         if isinstance(targ, list):
             for i, v in enumerate(targ):
-                for vn, path in find_key(keys, v):
-                    yield vn, [i, *path]
+                for path, vn in find_key(keys, v):
+                    yield [[i, *path], vn]
 ##### Examples
     listings = jsp['props']['pageProps']['searchRequestAndResponse']['listings']
     list(find_key(['itemId', 'title'], listings))

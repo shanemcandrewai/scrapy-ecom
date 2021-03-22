@@ -17,33 +17,36 @@ class TestrSpider(scrapy.Spider):
         yield scrapy.Request(url=url_json, callback=self.parse)
         
     def parse(self, response):
-        urlp = urlparse(response.url)
         items = json.loads(response.body)
-        extract = ['itemId', 'title', 'sellerName', 'sellerId']
-        ext_it = list(self.find_key(extract, items))
-        self.log(ext_it)
-
-        for k, v in ext_it.items():
-            url_seller = (urlp.scheme + '://' + urlp.netloc + '/u/'
-                     + items['listings'][0]['sellerInformation'][
-                         'sellerName'].replace( ' ', '-').lower()
-                     + '/' + str(items['listings'][0]['sellerInformation'][
-                         'sellerId']) + '/')
-        self.log('xxx ' + url_seller)
-        yield scrapy.Request(url=url_seller, callback=self.parse_seller)
+        extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents', 'priceType',
+                   'sellerName', 'sellerId', 'cityName', 'countryAbbreviation']
+        for e in self.find_key(extract, items):
+            yield {str(e[0]) : e[1]}
+            if 'sellerId' in e[0]:
+                sellerId = str(e[1])
+            if 'sellerName' in e[0]:
+                sellerName = e[1].replace(' ', '-').lower()
+                url_seller = ('/u/' + sellerName
+                              + '/' + sellerId + '/')
+                yield response.follow(url=url_seller, callback=self.parse_seller)
 
     def parse_seller(self, response):
-        yield None
+        user = json.loads(response.xpath('//body').re_first('>\{.*?\}\<')[1:-1])
+        extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents', 'priceType',
+                   'sellerName', 'sellerId', 'cityName', 'countryAbbreviation']
+        for e in self.find_key(extract, user):
+            yield {str(e[0]) : e[1]}
 
     def find_key(self, keys, targ):
+        """ Search JSON string `targ` for `keys`, return path and value """
         if isinstance(targ, dict):
             for k, v in targ.items():
                 for key in keys:
                     if k == key:
-                        yield [k], v
+                        yield [[k], v]
                 for path, vn in self.find_key(keys, v):
-                    yield [k, *path], vn
+                    yield [[k, *path], vn]
         if isinstance(targ, list):
             for i, v in enumerate(targ):
                 for path, vn in self.find_key(keys, v):
-                    yield [i, *path], vn
+                    yield [[i, *path], vn]
