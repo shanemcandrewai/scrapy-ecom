@@ -2,16 +2,12 @@ import scrapy
 import os
 from urllib.parse import urlparse
 import json
-from stem import Signal
-from stem.control import Controller
 
 class TestrSpider(scrapy.Spider):
     name = "testr"
 
     def start_requests(self):
         self.url = getattr(self, 'url', None)
-        self.new_id(getattr(self, 'pword', None))
-
         try:
             urlp = urlparse(self.url)
             url_items = (urlp.scheme + '://' + urlp.netloc 
@@ -46,7 +42,7 @@ class TestrSpider(scrapy.Spider):
                     sellerName = sellerName[:-1]
                 url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
                 yield response.follow(url=url_seller, callback=self.parse)
- #       yield scrapy.Request(url=(self.url + '/p/2/'), callback=self.parse)
+        yield scrapy.Request(url=(self.url + '/p/999992/'), callback=self.parse)
 
     def find_key(self, keys, targ):
         """ Search JSON string `targ` for `keys`, return path and value """
@@ -62,7 +58,3 @@ class TestrSpider(scrapy.Spider):
                 for path, vn in self.find_key(keys, v):
                     yield [[i, *path], vn]
 
-    def new_id(self, pword):
-        with Controller.from_port(port = 9051) as controller:
-            controller.authenticate(pword)
-            controller.signal(Signal.NEWNYM)
