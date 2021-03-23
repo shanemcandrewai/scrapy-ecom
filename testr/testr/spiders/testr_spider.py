@@ -2,14 +2,18 @@ import scrapy
 import os
 from urllib.parse import urlparse
 import json
+from stem import Signal
+from stem.control import Controller
 
 class TestrSpider(scrapy.Spider):
     name = "testr"
 
     def start_requests(self):
-        url = getattr(self, 'url', None)
+        self.url = getattr(self, 'url', None)
+        self.new_id(getattr(self, 'pword', None))
+
         try:
-            urlp = urlparse(url)
+            urlp = urlparse(self.url)
             url_items = (urlp.scheme + '://' + urlp.netloc 
                        + '/lrp/api/search?attributesById[]=' 
                        + urlp.fragment.split('|')[0].split(':')[1]
@@ -17,12 +21,10 @@ class TestrSpider(scrapy.Spider):
                        + urlp.fragment.split('|')[1].replace(':', '%3A')
                        + '&l1CategoryId=1')
         except IndexError:
-            url_items = url
+            url_items = self.url
         yield scrapy.Request(url=url_items, callback=self.parse)
         
     def parse(self, response):
-        url = response.url
-        self.log(f'xxx {url}')
         try:
             items = json.loads(response.body)
         except json.decoder.JSONDecodeError:
@@ -44,9 +46,7 @@ class TestrSpider(scrapy.Spider):
                     sellerName = sellerName[:-1]
                 url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
                 yield response.follow(url=url_seller, callback=self.parse)
-        self.log(f'xxx finished')
-        yield scrapy.request(response.urljoin(url='/p/2'), callback=self.parse)
-#        yield scrapy.request(response.urljoin(url='/p/3'), callback=self.parse)
+ #       yield scrapy.Request(url=(self.url + '/p/2/'), callback=self.parse)
 
     def find_key(self, keys, targ):
         """ Search JSON string `targ` for `keys`, return path and value """
@@ -61,3 +61,8 @@ class TestrSpider(scrapy.Spider):
             for i, v in enumerate(targ):
                 for path, vn in self.find_key(keys, v):
                     yield [[i, *path], vn]
+
+    def new_id(self, pword):
+        with Controller.from_port(port = 9051) as controller:
+            controller.authenticate(pword)
+            controller.signal(Signal.NEWNYM)
