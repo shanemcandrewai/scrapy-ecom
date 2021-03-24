@@ -1,4 +1,4 @@
-# Scrapy settings for testr project
+# Scrapy settings for tutor project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,20 +7,17 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'testr'
+BOT_NAME = 'tutor'
 
-SPIDER_MODULES = ['testr.spiders']
-NEWSPIDER_MODULE = 'testr.spiders'
+SPIDER_MODULES = ['tutor.spiders']
+NEWSPIDER_MODULE = 'tutor.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'testr (+http://www.yourdomain.com)'
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'
-
-DEPTH_LIMIT = 10
+#USER_AGENT = 'tutor (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-#ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -28,7 +25,7 @@ DEPTH_LIMIT = 10
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+#DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -48,14 +45,14 @@ DOWNLOAD_DELAY = 3
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'testr.middlewares.TestrSpiderMiddleware': 543,
+#    'tutor.middlewares.TutorSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-DOWNLOADER_MIDDLEWARES = {
-    'testr.middlewares.TestrDownloaderMiddleware': 543,
-}
+#DOWNLOADER_MIDDLEWARES = {
+#    'tutor.middlewares.TutorDownloaderMiddleware': 543,
+#}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -66,7 +63,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'testr.pipelines.TestrPipeline': 300,
+#    'tutor.pipelines.TutorPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

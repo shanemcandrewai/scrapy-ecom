@@ -28,9 +28,10 @@ class TestrSpider(scrapy.Spider):
                 '>\{.*?\}\<')[1:-1])
         extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
                    'priceType', 'sellerName', 'sellerId', 'cityName',
-                   'countryAbbreviation']
+                   'countryAbbreviation', 'itemId']
+        ge = {}
         for e in self.find_key(extract, items):
-            yield {str(e[0]) : e[1]}
+            ge[str(e[0])] = e[1]
             if 'sellerId' in e[0]:
                 sellerId = str(e[1])
             if 'sellerName' in e[0]:
@@ -42,7 +43,13 @@ class TestrSpider(scrapy.Spider):
                     sellerName = sellerName[:-1]
                 url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
                 yield response.follow(url=url_seller, callback=self.parse)
-        yield scrapy.Request(url=(self.url + '/p/999992/'), callback=self.parse)
+                for page in range(2, 10):
+                    yield response.follow(url=f"{url_seller}p/{page}/",
+                                          callback=self.parse)
+        yield ge
+        for page in range(2, 10):
+            yield scrapy.Request(url=f"{self.url}p/{page}/",
+                                 callback=self.parse)
 
     def find_key(self, keys, targ):
         """ Search JSON string `targ` for `keys`, return path and value """
