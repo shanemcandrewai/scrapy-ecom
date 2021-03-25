@@ -120,3 +120,13 @@ Launch privoxy as admin
 ##### Examples
     listings = jsp['props']['pageProps']['searchRequestAndResponse']['listings']
     list(find_key(['itemId', 'title'], listings))
+#### [How to convert string representation of list to a list](https://stackoverflow.com/questions/1894269/how-to-convert-string-representation-of-list-to-a-list)
+
+    import ast
+    npm = []
+    for m in mp:
+        for k, v in m.items():
+            kl = ast.literal_eval(k)
+            kl.append(v)
+            npm.append(kl)
+
