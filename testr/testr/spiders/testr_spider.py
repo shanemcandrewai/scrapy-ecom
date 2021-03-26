@@ -8,23 +8,10 @@ class TestrSpider(scrapy.Spider):
 
     def start_requests(self):
         self.url = getattr(self, 'url', None)
-        try:
-            urlp = urlparse(self.url)
-            url_items = (urlp.scheme + '://' + urlp.netloc 
-                       + '/lrp/api/search?attributesById[]=' 
-                       + urlp.fragment.split('|')[0].split(':')[1]
-                       + '&attributesByKey[]=' 
-                       + urlp.fragment.split('|')[1].replace(':', '%3A')
-                       + '&l1CategoryId=1')
-        except IndexError:
-            url_items = self.url
-        yield scrapy.Request(url=url_items, callback=self.parse)
+        yield scrapy.Request(url=self.url, callback=self.parse)
         
     def parse(self, response):
-        try:
-            items = json.loads(response.body)
-        except json.decoder.JSONDecodeError:
-            items = json.loads(response.xpath('//body').re_first(
+        items = json.loads(response.xpath('//body').re_first(
                 '>\{.*?\}\<')[1:-1])
         extract = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
                    'priceType', 'sellerName', 'sellerId', 'cityName',
@@ -47,8 +34,16 @@ class TestrSpider(scrapy.Spider):
                     yield response.follow(url=f"{url_seller}p/{page}/",
                                           callback=self.parse)
         yield ge
-        for page in range(2, 10):
-            yield scrapy.Request(url=f"{self.url}p/{page}/",
+        if items:
+            page_ind = response.url.find('p/')
+            slash_ind = response.url.rfind('/')
+            if page_ind == -1:
+                page_num = 1
+            else:
+                page_num = response.url[page_ind+2:slash_ind]
+            next_num = int(page_num) + 1
+            next_page = f"/p/{str(next_num)}"
+            yield scrapy.Request(url=next_page,
                                  callback=self.parse)
 
     def find_key(self, keys, targ):
