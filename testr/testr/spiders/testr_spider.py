@@ -11,6 +11,7 @@ class TestrSpider(scrapy.Spider):
         yield scrapy.Request(url=self.url, callback=self.parse)
         
     def parse(self, response):
+        self.log(f"xxx {response.url}")
         items = json.loads(response.xpath('//body').re_first(
                 '>\{.*?\}\<')[1:-1])
         extract_fields = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
@@ -33,9 +34,7 @@ class TestrSpider(scrapy.Spider):
                     url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
 
                     if response.follow(url=url_seller, callback=self.parse):
-                        self.log(f"xxxxx {url_seller}")
                         np = self.get_next_page_url(response.url)
-                        self.log(f"xxxxx {np}")
                         yield scrapy.Request(url=np,
                                              callback=self.parse)
             yield seller_items
@@ -44,12 +43,12 @@ class TestrSpider(scrapy.Spider):
                                  callback=self.parse)
 
     def get_next_page_url(self, url):
-        page_ind = url.find('p/') - 1
+        page_ind = url.find('/p/')
         slash_ind = url.rfind('/')
         if page_ind == -1:
             page_num = 1
         else:
-            page_num = url[page_ind+2:slash_ind]
+            page_num = url[page_ind+3:slash_ind]
         next_num = int(page_num) + 1
         return f"{url[:page_ind]}/p/{str(next_num)}/"
 
