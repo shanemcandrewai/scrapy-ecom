@@ -11,7 +11,6 @@ class TestrSpider(scrapy.Spider):
         yield scrapy.Request(url=self.url, callback=self.parse)
         
     def parse(self, response):
-        self.log(f"xxx {response.url}")
         items = json.loads(response.xpath('//body').re_first(
                 '>\{.*?\}\<')[1:-1])
         extract_fields = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
@@ -34,13 +33,13 @@ class TestrSpider(scrapy.Spider):
                     url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
 
                     if response.follow(url=url_seller, callback=self.parse):
-                        np = self.get_next_page_url(response.url)
-                        yield scrapy.Request(url=np,
+                        np = self.get_next_page_url(url_seller)
+                        yield response.follow(url=np,
                                              callback=self.parse)
             yield seller_items
         if items:
-            yield scrapy.Request(url= self.get_next_page_url(response.url),
-                                 callback=self.parse)
+            np = self.get_next_page_url(response.url)
+            yield scrapy.Request(url= np, callback=self.parse)
 
     def get_next_page_url(self, url):
         page_ind = url.find('/p/')
