@@ -38,10 +38,9 @@ class TestrSpider(scrapy.Spider):
         else:
             for cat_item in self.find_key(extract_fields, items):
                 item_set[str(cat_item[0])] = cat_item[1]
-        yield item_set
 
-        if items:
-# TODO only process if item contains only title and SellerID 
+        if len(item_set) > 2:
+            yield item_set
             np = self.get_next_page_url(response.url)
             yield scrapy.Request(url=np, callback=self.parse)
 
