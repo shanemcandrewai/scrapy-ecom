@@ -32,14 +32,13 @@ class TestrSpider(scrapy.Spider):
                         sellerName = sellerName[:-1]
                     url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
 
-                    if response.follow(url=url_seller, callback=self.parse):
-                        np = self.get_next_page_url(url_seller)
-                        yield response.follow(url=np,
-                                             callback=self.parse)
+                    urlp = urlparse(response.url)
+                    urlu = urlp.scheme + '://' + urlp.netloc + url_seller
+                    yield scrapy.Request(url=urlu, callback=self.parse)
             yield seller_items
         if items:
             np = self.get_next_page_url(response.url)
-            yield scrapy.Request(url= np, callback=self.parse)
+            yield scrapy.Request(url=np, callback=self.parse)
 
     def get_next_page_url(self, url):
         page_ind = url.find('/p/')
