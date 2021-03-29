@@ -17,10 +17,10 @@ class TestrSpider(scrapy.Spider):
                    'priceType', 'sellerName', 'sellerId', 'cityName',
                    'countryAbbreviation', 'itemId']
 
+        item_set = {}
         if '/u/' not in response.url:
-            seller_items = {}
             for cat_item in self.find_key(extract_fields, items):
-                seller_items[str(cat_item[0])] = cat_item[1]
+                item_set[str(cat_item[0])] = cat_item[1]
                 if 'sellerId' in cat_item[0]:
                     sellerId = str(cat_item[1])
                 if 'sellerName' in cat_item[0]:
@@ -35,8 +35,13 @@ class TestrSpider(scrapy.Spider):
                     urlp = urlparse(response.url)
                     urlu = urlp.scheme + '://' + urlp.netloc + url_seller
                     yield scrapy.Request(url=urlu, callback=self.parse)
-            yield seller_items
+        else:
+            for cat_item in self.find_key(extract_fields, items):
+                item_set[str(cat_item[0])] = cat_item[1]
+        yield item_set
+
         if items:
+# TODO only process if item contains only title and SellerID 
             np = self.get_next_page_url(response.url)
             yield scrapy.Request(url=np, callback=self.parse)
 
