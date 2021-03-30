@@ -20,7 +20,7 @@ class TestrSpider(scrapy.Spider):
         item_set = {}
         if '/l/' in response.url:
             for cat_item in self.find_key(extract_fields, items):
-                item_set[str(cat_item[0])] = cat_item[1]
+                item_set[str(cat_item[0][-1])] = cat_item[1]
                 if 'sellerId' in cat_item[0]:
                     sellerId = str(cat_item[1])
                 if 'sellerName' in cat_item[0]:
@@ -31,15 +31,16 @@ class TestrSpider(scrapy.Spider):
                     if sellerName[-1] == '-':
                         sellerName = sellerName[:-1]
                     url_seller = ('/u/' + sellerName + '/' + sellerId + '/')
-
                     urlp = urlparse(response.url)
                     urlu = urlp.scheme + '://' + urlp.netloc + url_seller
                     yield scrapy.Request(url=urlu, callback=self.parse)
         else:
             for cat_item in self.find_key(extract_fields, items):
-                item_set[str(cat_item[0][-1])] = cat_item[1]
+                if 'seller' not in cat_item[0] and 'query' not in cat_item[0]:
+                    item_set[str(cat_item[0][-1])] = cat_item[1]
 
         if len(item_set) > 2:
+            self.log(f'xxx {response.url}')
             yield item_set
             np = self.get_next_page_url(response.url)
             yield scrapy.Request(url=np, callback=self.parse)
