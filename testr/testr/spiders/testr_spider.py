@@ -26,9 +26,8 @@ class TestrSpider(scrapy.Spider):
                         itemId = cat_item[1]
                     else: 
                         yield item_set
+                        item_set = {}
                 item_set[str(cat_item[0][-1])] = cat_item[1]
-                if item_set != {}:
-                    yield 
                 if 'sellerId' in cat_item[0]:
                     sellerId = str(cat_item[1])
                 if 'sellerName' in cat_item[0]:
@@ -49,6 +48,7 @@ class TestrSpider(scrapy.Spider):
                         itemId = cat_item[1]
                     else: 
                         yield item_set
+                        item_set = {}
                 if 'seller' not in cat_item[0] and 'query' not in cat_item[0]:
                     item_set[str(cat_item[0][-1])] = cat_item[1]
 
