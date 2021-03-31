@@ -18,9 +18,17 @@ class TestrSpider(scrapy.Spider):
                    'countryAbbreviation', 'itemId']
 
         item_set = {}
+        itemId = 0
         if '/l/' in response.url:
             for cat_item in self.find_key(extract_fields, items):
+                if cat_item[0][-1] == 'itemId' and itemId != cat_item[1]:
+                    if itemId == 0:
+                        itemId = cat_item[1]
+                    else: 
+                        yield item_set
                 item_set[str(cat_item[0][-1])] = cat_item[1]
+                if item_set != {}:
+                    yield 
                 if 'sellerId' in cat_item[0]:
                     sellerId = str(cat_item[1])
                 if 'sellerName' in cat_item[0]:
@@ -36,11 +44,15 @@ class TestrSpider(scrapy.Spider):
                     yield scrapy.Request(url=urlu, callback=self.parse)
         else:
             for cat_item in self.find_key(extract_fields, items):
+                if cat_item[0][-1] == 'itemId' and itemId != cat_item[1]:
+                    if itemId == 0:
+                        itemId = cat_item[1]
+                    else: 
+                        yield item_set
                 if 'seller' not in cat_item[0] and 'query' not in cat_item[0]:
                     item_set[str(cat_item[0][-1])] = cat_item[1]
 
         if len(item_set) > 2:
-            self.log(f'xxx {response.url}')
             yield item_set
             np = self.get_next_page_url(response.url)
             yield scrapy.Request(url=np, callback=self.parse)
