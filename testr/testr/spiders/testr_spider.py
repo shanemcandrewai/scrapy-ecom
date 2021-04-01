@@ -15,7 +15,8 @@ class TestrSpider(scrapy.Spider):
                 '>\{.*?\}\<')[1:-1])
         extract_fields = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
                    'priceType', 'sellerName', 'sellerId', 'cityName',
-                   'countryAbbreviation', 'itemId']
+                   'countryAbbreviation', 'itemId', 'periodSinceRegistrationDate', 'score',
+                   'count']
 
         item_set = {}
         itemId = 0
@@ -49,7 +50,7 @@ class TestrSpider(scrapy.Spider):
                     else: 
                         yield item_set
                         item_set = {}
-                if 'seller' not in cat_item[0] and 'query' not in cat_item[0]:
+                if cat_item[0][-2:] != ['seller', 'title'] and 'query' not in cat_item[0]:
                     item_set[str(cat_item[0][-1])] = cat_item[1]
 
         if len(item_set) > 2:
