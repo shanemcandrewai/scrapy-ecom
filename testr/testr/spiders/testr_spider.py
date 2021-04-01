@@ -14,13 +14,15 @@ class TestrSpider(scrapy.Spider):
         items = json.loads(response.xpath('//body').re_first(
                 '>\{.*?\}\<')[1:-1])
         extract_fields = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
-                   'priceType', 'sellerName', 'sellerId', 'cityName',
-                   'countryAbbreviation', 'itemId', 'periodSinceRegistrationDate', 'score',
-                   'count']
+                          'priceType', 'sellerName', 'sellerId', 'cityName',
+                          'countryAbbreviation', 'itemId',
+                          'periodSinceRegistrationDate', 'score', 'count']
 
+        listings = items['props']['pageProps']['searchRequestAndResponse']['listings']
         item_set = {}
-        itemId = 0
         if '/l/' in response.url:
+            for cat_field in self.find_key(extract_fields, cat_item):
+                item_set[str(cat_field[0][-1])] = cat_field[1]
             for cat_item in self.find_key(extract_fields, items):
                 if cat_item[0][-1] == 'itemId' and itemId != cat_item[1]:
                     if itemId == 0:
@@ -43,20 +45,17 @@ class TestrSpider(scrapy.Spider):
                     urlu = urlp.scheme + '://' + urlp.netloc + url_seller
                     yield scrapy.Request(url=urlu, callback=self.parse)
         else:
-            for cat_item in self.find_key(extract_fields, items):
-                if cat_item[0][-1] == 'itemId' and itemId != cat_item[1]:
-                    if itemId == 0:
-                        itemId = cat_item[1]
-                    else: 
-                        yield item_set
-                        item_set = {}
-                if cat_item[0][-2:] != ['seller', 'title'] and 'query' not in cat_item[0]:
-                    item_set[str(cat_item[0][-1])] = cat_item[1]
-
-        if len(item_set) > 2:
-            yield item_set
-            np = self.get_next_page_url(response.url)
-            yield scrapy.Request(url=np, callback=self.parse)
+            seller = items['props']['seller']
+            for cat_item in listings:
+                for cat_field in self.find_key(extract_fields, reviews):
+                    item_set[str(cat_field[0][-1])] = cat_field[1]
+                for cat_field in self.find_key(extract_fields, cat_item):
+                    item_set[str(cat_field[0][-1])] = cat_field[1]
+                if len(item_set) > 2:
+                    yield item_set
+                    np = self.get_next_page_url(response.url)
+                    yield scrapy.Request(url=np, callback=self.parse)
+                item_set = {}
 
     def get_next_page_url(self, url):
         page_ind = url.find('/p/')
