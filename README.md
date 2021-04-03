@@ -23,6 +23,8 @@
     scrapy crawl quote -a url="http://quotes.toscrape.com"
 #### Windows
     scrapy crawl quote -a url='http://quotes.toscrape.com'
+### Resume scrape and append to csv
+    scrapy crawl quote -s JOBDIR=crawls -a url='https://www.example.com' -o mp.csv 2> error.log
 ## Tor
 ### [Linux](https://2019.www.torproject.org/docs/debian.html.en)
 #### To use source lines with https in /etc/apt/sources.list
