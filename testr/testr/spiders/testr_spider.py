@@ -15,7 +15,7 @@ class TestrSpider(scrapy.Spider):
                 '>\{.*?\}\<')[1:-1])
         extract_fields = ['date', 'categoryId', 'verticals', 'title', 'priceCents',
                           'priceType', 'sellerName', 'sellerId', 'cityName',
-                          'countryAbbreviation', 'itemId',
+                          'countryAbbreviation', 'itemId', 'id', 'reviews',
                           'periodSinceRegistrationDate', 'score', 'count']
 
         listings = items['props']['pageProps']['searchRequestAndResponse']['listings']
