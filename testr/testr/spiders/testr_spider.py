@@ -40,13 +40,15 @@ class TestrSpider(scrapy.Spider):
         else:
             item_set = {}
             seller = items['props']['seller']
+            for cat_field in self.find_key(extract_fields, seller):
+                item_set[str(cat_field[0][-1])] = cat_field[1]
+            item_set['listings'] = []
             for cat_item in listings:
-                for cat_field in self.find_key(extract_fields, seller):
-                    item_set[str(cat_field[0][-1])] = cat_field[1]
+                item_ind = {}
                 for cat_field in self.find_key(extract_fields, cat_item):
-                    item_set[str(cat_field[0][-1])] = cat_field[1]
-                yield item_set
-                item_set = {}
+                    item_ind[str(cat_field[0][-1])] = cat_field[1]
+                item_set['listings'].append(item_ind)
+            yield item_set
 
         self.log(f'xxx {response.url}')
         self.log(f'xx2 {len(listings)}')
