@@ -1,8 +1,8 @@
 import scrapy
-import itertools
+
 
 class QuotesSpider(scrapy.Spider):
-    name = "tutor"
+    name = "quotes"
     start_urls = [
         'http://quotes.toscrape.com/page/1/',
     ]
@@ -15,10 +15,7 @@ class QuotesSpider(scrapy.Spider):
                 'author': quote.css('span small::text').get(),
                 'tags': quote.css('div.tags a.tag::text').getall(),
             }
-        if quotes_sel:
-            page_ind = response.url.find('page/')
-            slash_ind = response.url.rfind('/')
-            page_num = response.url[page_ind+5:slash_ind]
-            next_num = int(page_num) + 1
-            next_page = f"/page/{str(next_num)}"
-            yield response.follow(next_page)
+
+        next_page = response.css('li.next a::attr(href)').get()
+        if next_page is not None:
+            yield response.follow(next_page, callback=self.parse)
