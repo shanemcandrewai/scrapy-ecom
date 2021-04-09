@@ -1,3 +1,5 @@
+import json
+import pandas as pd
 with open('mp.json') as f:
     dfd = json.load(f)
 csvl = []
@@ -8,6 +10,8 @@ for d in dfd:
         rec.update(d)
         rec[rec['periodSinceRegistrationDate']] = True
         rec[rec['priceType']] = True
+        if 'countryAbbreviation' in rec and 'cityName' in rec:
+            rec[rec['countryAbbreviation'] + rec['cityName']] = True
         rec[rec['sellerId']] = True
         rec[rec['categoryId']] = True
         for v in rec['verticals']:
@@ -16,6 +20,10 @@ for d in dfd:
         del rec['periodSinceRegistrationDate']
         del rec['title']
         del rec['priceType']
+        if 'cityName' in rec:
+            del rec['cityName']
+        if 'countryAbbreviation' in rec:
+            del rec['countryAbbreviation']
         del rec['date']
         del rec['sellerId']
         del rec['sellerName']
@@ -23,4 +31,4 @@ for d in dfd:
         del rec['verticals']
         del rec['listings']
         csvl.append(rec)
-
+df = pd.DataFrame(csvl)
